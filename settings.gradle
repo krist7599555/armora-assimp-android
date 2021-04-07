@@ -1,0 +1,3 @@
+include ':app'
+include ':assimp' // add to recognize this
+rootProject.name = "armona"

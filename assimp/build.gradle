@@ -1,0 +1,92 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+//apply plugin: 'com.android.application'
+//apply plugin: 'kotlin-android'
+
+// jitpack
+apply plugin: 'maven'
+group = 'com.github.kotlin-graphics'
+
+buildscript {
+
+    ext.kotlinVersion = '1.4.20' // change to you kotlin version and work. check via "gradle -v"
+
+    repositories {
+//        jcenter()
+        mavenCentral()
+        maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+//        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+    }
+}
+
+//apply plugin: 'com.github.johnrengelman.shadow'
+
+
+dependencies {
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+    compile 'com.github.kotlin-graphics:gli:15f63adafe12435aa0d94c46d1ad1cda5c8f0462'
+
+    // https://mvnrepository.com/artifact/com.google.android/android
+    compileOnly group: 'com.google.android', name: 'android', version: '2.3.1'
+
+
+//    testCompile 'com.github.elect86:kotlintest:b31cda5fb3f38606bb08f32c22f2177a98c634aa'
+    testCompile 'io.kotlintest:kotlintest:2.0.1'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url 'https://jitpack.io' }
+}
+
+task packageSources(type: Jar, dependsOn: 'classes') {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts { archives packageSources }
+
+// include src folder
+sourceSets.main.resources { srcDirs = ["src/main"]; include "**/*.*" }
+//sourceSets {
+//    main {
+//        java {
+//            srcDirs = ['src/main']
+//            include "**/*.*"
+//        }
+//    }
+//
+//    test {
+//        java {
+//            srcDirs = ['src/test']
+//            include "**/*.*"
+//        }
+//    }
+//}
+
+// ass by krist to compile
+//https://www.youtube.com/watch?v=BwdkyrnJQsg&ab_channel=LynAsSazzad
+jar {
+
+//    manifest {
+//        attributes(
+//                'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
+////                'Main-Class': 'hello.HelloWorld'
+//        )
+//    }
+//    from('src/main/java') {
+//        include 'config/**/*.xml'
+//    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree((it)) }
+    }
+}

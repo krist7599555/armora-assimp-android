@@ -1,0 +1,109 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.armona"
+        minSdkVersion 27
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+//    https://stackoverflow.com/questions/44342455/more-than-one-file-was-found-with-os-independent-path-meta-inf-license
+    packagingOptions {
+        exclude '**/javadoc/**'
+        exclude 'jogamp/graph/curve/opengl/shader/curverenderer01-pass2-vbaa_allprop01.glsl'
+        exclude 'jogamp/opengl/util/glsl/fixedfunc/shaders/FixedFuncColorTexture.fp'
+        exclude 'jogamp/**'
+        exclude 'kotlin/reflect/reflect.kotlin_builtins'
+        exclude 'kotlin/coroutines/coroutines.kotlin_builtins'
+//        exclude 'kotlin/**/*.kotlin_builtins'
+        exclude 'kotlin/**.kotlin_builtins'
+        exclude 'natives/macosx-universal/libnativewindow_macosx.jnilib'
+        exclude 'natives/**.jnilib'
+        exclude 'com/jogamp/common/util/bin/exe-windows-x86_64.defl'
+        exclude '**.defl'
+        exclude '**.txt'
+        exclude '**.dll'
+        exclude '**.png'
+        exclude '**.jpg'
+        exclude 'resources/glass.png'
+        exclude 'stylesheet.css'
+        exclude 'element-list'
+        exclude 'resources/x.png'
+        exclude 'favicon.ico'
+        exclude '**.html'
+        exclude '**.js'
+        exclude '**.zip'
+        exclude 'allclasses-noframe.html'
+        exclude 'deprecated-list.html'
+        exclude 'type-search-index.js'
+        exclude 'jquery/**'
+        exclude 'jquery/external/jquery/jquery.js'
+        exclude 'jquery/images/ui-icons_cd0a0a_256x240.png'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/**'
+        exclude("META-INF/*.kotlin_module")
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.1.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
+    api project(path: ':assimp')
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation fileTree(dir: 'libs/lwjgl-3.2.3', include: ['lwjgl/*.jar'])
+    implementation fileTree(dir: 'libs/lwjgl-3.2.3', include: ['lwjgl-assimp/*.jar'])
+//    implementation files('libs/assimp-all-android.jar')
+    // from :assimp in neibor folder
+//    {
+//        exclude module: 'com.github.kotlin-graphics:assimp:4.0-beta17'
+//    }
+//    implementation "libs/assimp-all.jar" // libs
+//    implementation fileTree(dir: 'libs/lwjgl-3.2.3', include: ['assimp-all.jar'])
+//    implementation fileTree(dir: 'libs', include: ['**/lwjgl/*.jar']).collect()
+//    implementation fileTree(dir: 'libs', include: ['**/*-assimp*.jar']).collect()
+//    implementation fileTree(dir: 'libs', include: ['**/*-opengles*.jar']).collect()
+//    implementation 'com.github.kotlin-graphics:assimp:4.0-beta17'
+}
