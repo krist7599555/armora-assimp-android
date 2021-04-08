@@ -20,8 +20,7 @@ package jayway.opengl.tutorial
  *
  * @author Per-Erik Bergman (per-erik.bergman@jayway.com)
  */
-class SimplePlane @JvmOverloads constructor(width: Float = 1f, height: Float = 1f) :
-    Mesh() {
+class SimplePlane @JvmOverloads constructor(width: Float = 1f, height: Float = 1f) : Mesh() {
     /**
      * Create a plane.
      *

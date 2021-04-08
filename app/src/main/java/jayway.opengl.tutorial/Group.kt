@@ -26,69 +26,15 @@ import javax.microedition.khronos.opengles.GL10
  */
 class Group : Mesh() {
 	private val mChildren = Vector<Mesh>()
-	override fun draw(gl: GL10) {
-		val size = mChildren.size
-		for (i in 0 until size) mChildren[i].draw(gl)
-	}
 
-	/**
-	 * @param location
-	 * @param object
-	 * @see Vector.add
-	 */
-	fun add(location: Int, `object`: Mesh) {
-		mChildren.add(location, `object`)
-	}
+	override fun draw(gl: GL10) = mChildren.forEach { it.draw(gl) }
+	fun add(location: Int, mesh: Mesh) = mChildren.add(location, mesh)
+	fun add(mesh: Mesh) = mChildren.add(mesh)
+	fun clear() = mChildren.clear()
 
-	/**
-	 * @param object
-	 * @return
-	 * @see Vector.add
-	 */
-	fun add(`object`: Mesh): Boolean {
-		return mChildren.add(`object`)
-	}
+	operator fun get(location: Int): Mesh = mChildren[location]
 
-	/**
-	 *
-	 * @see Vector.clear
-	 */
-	fun clear() {
-		mChildren.clear()
-	}
-
-	/**
-	 * @param location
-	 * @return
-	 * @see Vector.get
-	 */
-	operator fun get(location: Int): Mesh {
-		return mChildren[location]
-	}
-
-	/**
-	 * @param location
-	 * @return
-	 * @see Vector.remove
-	 */
-	fun remove(location: Int): Mesh {
-		return mChildren.removeAt(location)
-	}
-
-	/**
-	 * @param object
-	 * @return
-	 * @see Vector.remove
-	 */
-	fun remove(`object`: Any?): Boolean {
-		return mChildren.remove(`object`)
-	}
-
-	/**
-	 * @return
-	 * @see Vector.size
-	 */
-	fun size(): Int {
-		return mChildren.size
-	}
+	fun remove(location: Int): Mesh = mChildren.removeAt(location)
+	fun remove(mesh: Any?): Boolean = mChildren.remove(mesh)
+	fun size(): Int = mChildren.size
 }

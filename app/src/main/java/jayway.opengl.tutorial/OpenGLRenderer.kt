@@ -19,9 +19,10 @@ import android.opengl.GLSurfaceView
 import android.opengl.GLU
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import javax.microedition.khronos.opengles.GL10.*
 
 class OpenGLRenderer : GLSurfaceView.Renderer {
-	private val root: Group
+	private val root = Group()
 
 	/*
      * (non-Javadoc)
@@ -31,18 +32,14 @@ class OpenGLRenderer : GLSurfaceView.Renderer {
      * .khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
      */
 	override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
-		// Set the background color to black ( rgba ).
-		gl.glClearColor(0.0f, 0.0f, 1.0f, 0.5f)
-		// Enable Smooth Shading, default not really needed.
-		gl.glShadeModel(GL10.GL_SMOOTH)
-		// Depth buffer setup.
-		gl.glClearDepthf(1.0f)
-		// Enables depth testing.
-		gl.glEnable(GL10.GL_DEPTH_TEST)
-		// The type of depth testing to do.
-		gl.glDepthFunc(GL10.GL_LEQUAL)
-		// Really nice perspective calculations.
-		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST)
+		with (gl) {
+			glClearColor(0.0f, 0.0f, 1.0f, 0.5f) // Set the background color to black ( rgba ).
+			glShadeModel(GL_SMOOTH) // Enable Smooth Shading, default not really needed.
+			glClearDepthf(1.0f) // Depth buffer setup.
+			glEnable(GL_DEPTH_TEST) // Enables depth testing.
+			glDepthFunc(GL_LEQUAL) // The type of depth testing to do.
+			glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST) // Really nice perspective calculations.
+		}
 	}
 
 	/*
@@ -53,12 +50,12 @@ class OpenGLRenderer : GLSurfaceView.Renderer {
      * khronos.opengles.GL10)
      */
 	override fun onDrawFrame(gl: GL10) {
-		// Clears the screen and depth buffer.
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT or GL10.GL_DEPTH_BUFFER_BIT)
-		// Replace the current matrix with the identity matrix
-		gl.glLoadIdentity()
-		// Translates 4 units into the screen.
-		gl.glTranslatef(0f, 0f, -4f)
+		with (gl) {
+			glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT) // Clears the screen and depth buffer.
+			glLoadIdentity() // Replace the current matrix with the identity matrix
+//			glTranslatef(0f, 0f, -4f) // Translates 4 units into the screen.
+			glTranslatef(0f, 0f, -4f) // Translates 4 units into the screen.
+		}
 		// Draw our scene.
 		root.draw(gl)
 	}
@@ -71,21 +68,17 @@ class OpenGLRenderer : GLSurfaceView.Renderer {
      * .khronos.opengles.GL10, int, int)
      */
 	override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
-		// Sets the current view port to the new size.
-		gl.glViewport(0, 0, width, height)
-		// Select the projection matrix
-		gl.glMatrixMode(GL10.GL_PROJECTION)
-		// Reset the projection matrix
-		gl.glLoadIdentity()
-		// Calculate the aspect ratio of the window
-		GLU.gluPerspective(
-			gl, 45.0f, width.toFloat() / height.toFloat(), 0.1f,
-			1000.0f
-		)
-		// Select the modelview matrix
-		gl.glMatrixMode(GL10.GL_MODELVIEW)
-		// Reset the modelview matrix
-		gl.glLoadIdentity()
+		val aspect = width.toFloat() / height.toFloat()
+		with (gl) {
+			glViewport(0, 0, width, height) // Sets the current view port to the new size.
+
+			glMatrixMode(GL_PROJECTION) // Select the projection matrix
+			glLoadIdentity() // Reset the projection matrix
+			GLU.gluPerspective(gl, 45.0f, aspect, 0.1f, 1000.0f) // Calculate the aspect ratio of the window
+
+			glMatrixMode(GL_MODELVIEW) // Select the modelview matrix
+			glLoadIdentity() // Reset the modelview matrix
+		}
 	}
 
 	/**
@@ -94,15 +87,10 @@ class OpenGLRenderer : GLSurfaceView.Renderer {
 	 * @param mesh
 	 * the mesh to add.
 	 */
-	fun addMesh(mesh: Mesh?) {
+	fun addMesh(mesh: Mesh) {
 		if (mesh != null) {
 			root.add(mesh)
 		}
 	}
 
-	init {
-		// Initialize our root.
-		val group = Group()
-		root = group
-	}
 }

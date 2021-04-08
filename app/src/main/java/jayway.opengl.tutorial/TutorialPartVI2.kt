@@ -1,13 +1,12 @@
 package jayway.opengl.tutorial
 
 import android.app.Activity
-import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.Window
 import android.view.WindowManager
+import com.armona.Utils
+
 //import jayway.opengl.tutorial.OpenGLRenderer
 
 /**
@@ -46,6 +45,10 @@ class TutorialPartVI2 : Activity() {
 
         // Create a OpenGL view.
         val view = GLSurfaceView(this)
+        view.setEGLContextClientVersion(2)
+// Assign our renderer.
+// Assign our renderer.
+//        view.setRenderer(FirstOpenGLProjectRenderer())
 
         // Creating and attaching the renderer.
         val renderer = OpenGLRenderer()
@@ -54,32 +57,37 @@ class TutorialPartVI2 : Activity() {
 
         // Create a new plane.
         val plane = SimplePlane(1f, 1f)
+		plane.loadBitmap(Utils.bitmapFromAssetManager(assets, "images/screenshot.png"));
 
         // Move and rotate the plane.
-        plane.z = 1.7f
-        plane.rx = -65f
+//        plane.z = 1.7f
+//        plane.rx = -65f
+        val plane2 = SimplePlane(1f, 1f)
+        plane2.loadBitmap(Utils.bitmapFromAssetManager(assets, "images/screenshot2.png"));
+//        plane2.x += 0.4f
+        plane2.y -= 0.5f
+        plane2.z += 0.5f
+        plane2.rx = -90f
 
-        // Load the texture.
-        val inp = assets.open("images/screenshot.png")
-        val bytes = inp.readBytes()
-        val bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-		plane.loadBitmap(bm);
 
         // Add the plane to the renderer.
+        val arrow = OBJMesh.fromAssetManager(assets, "model/arrow/Arrow5.obj")
+        renderer.addMesh(arrow)
         renderer.addMesh(plane)
+        renderer.addMesh(plane2)
 
 //        Looper
-        val imgs = arrayOf("images/screenshot.png", "images/screenshot2.png")
-        for (i in 0..10) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                println("LOOPER $i")
-                plane.loadBitmap(
-                    imgs.get(i % 2)
-                        .let { assets.open(it) }
-                        .let { it.readBytes() }
-                        .let { BitmapFactory.decodeByteArray(it, 0, it.size) }
-                )
-            }, (1000 * i).toLong())
-        }
+//        val imgs = arrayOf("images/screenshot.png", "images/screenshot2.png")
+//        for (i in 0..10) {
+//            Handler(Looper.getMainLooper()).postDelayed({
+//                println("LOOPER $i")
+//                plane.loadBitmap(
+//                    imgs.get(i % 2)
+//                        .let { assets.open(it) }
+//                        .let { it.readBytes() }
+//                        .let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+//                )
+//            }, (1000 * i).toLong())
+//        }
     }
 }
