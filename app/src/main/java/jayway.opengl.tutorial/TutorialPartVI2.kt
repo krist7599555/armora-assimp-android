@@ -4,6 +4,8 @@ import android.app.Activity
 import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Window
 import android.view.WindowManager
 //import jayway.opengl.tutorial.OpenGLRenderer
@@ -65,5 +67,19 @@ class TutorialPartVI2 : Activity() {
 
         // Add the plane to the renderer.
         renderer.addMesh(plane)
+
+//        Looper
+        val imgs = arrayOf("images/screenshot.png", "images/screenshot2.png")
+        for (i in 0..10) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                println("LOOPER $i")
+                plane.loadBitmap(
+                    imgs.get(i % 2)
+                        .let { assets.open(it) }
+                        .let { it.readBytes() }
+                        .let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+                )
+            }, (1000 * i).toLong())
+        }
     }
 }
