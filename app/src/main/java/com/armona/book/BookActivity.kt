@@ -13,7 +13,8 @@ class BookActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         glSurfaceView = GLSurfaceView(this);
-        renderer = BookRenderer()
+        renderer = AirHockyRenderer(this);
+//            renderer = BookRenderer()
         glSurfaceView.setEGLContextClientVersion(2)
         glSurfaceView.setRenderer(renderer)
         setContentView(glSurfaceView)

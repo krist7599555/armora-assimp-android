@@ -25,7 +25,7 @@ var tableVerticesWithTriangles = floatArrayOf(
     0f, -0.25f, 0f, 0f, 1f,
     0f, 0.25f, 1f, 0f, 0f
 )
-val BYTES_PER_FLOAT = Float.SIZE_BYTES
+const val BYTES_PER_FLOAT = Float.SIZE_BYTES
 val POSITION_COMPONENT_COUNT = 2 // we use as vec2(x, y)
 val COLOR_COMPONENT_COUNT = 3 // we use as vec2(x, y)
 val STRIDE = (POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT) * BYTES_PER_FLOAT
@@ -93,10 +93,11 @@ class BookRenderer : GLSurfaceView.Renderer {
     private var aColorLocation by Delegates.notNull<Int>()
     private var uColorLocation by Delegates.notNull<Int>()
     private var uMatrixLocation by Delegates.notNull<Int>()
-    private val projectionMatrix = FloatArray(16)
+    private val projectionMatrix = FloatArray(16) // -> uMatrixLocation
+    private val modelMatrix = FloatArray(16)
 
     private fun setup() {
-        program = createGlProgram(VERTEX_SHADER_TEXT, FRAGMENT_SHADER_TEXT)
+        program = ShaderHelper.createGlProgram(VERTEX_SHADER_TEXT, FRAGMENT_SHADER_TEXT)
         aPositionLocation = glGetAttribLocation(program, "a_Position");
         aColorLocation = glGetAttribLocation(program, "a_Color");
         uMatrixLocation = glGetUniformLocation(program, "u_Matrix");
@@ -134,17 +135,25 @@ class BookRenderer : GLSurfaceView.Renderer {
     @Suppress("UNUSED_PARAMETER")
     override fun onSurfaceChanged(_gl: GL10?, width: Int, height: Int) {
         glViewport(0, 0, width, height);
-        // camera
-        when(width > height) {
-            true -> {
-                val aspectRatio = width.toFloat() / height.toFloat()
-                Matrix.orthoM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f)
-            }
-            false -> {
-                val aspectRatio = height.toFloat() / width.toFloat()
-                Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f)
-            }
-        }
+        // proj
+//        MatrixHelper.orthoM(projectionMatrix, 0, width, height);// choice 2
+        MatrixHelper.perspectiveM(
+            projectionMatrix,
+            45f,
+            width.toFloat() / height.toFloat(),
+            1f,
+            10f
+        ) // choice 2
+
+        // model
+        Matrix.setIdentityM(modelMatrix, 0);
+        Matrix.translateM(modelMatrix, 0, 0f, 0f, -2f);
+        Matrix.rotateM(modelMatrix, 0, -60f, 1f, 0f, 0f);
+
+        val temp = FloatArray(16)
+        Matrix.multiplyMM(temp, 0, projectionMatrix, 0, modelMatrix, 0)
+        System.arraycopy(temp, 0, projectionMatrix, 0, temp.size);
+
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -161,43 +170,4 @@ class BookRenderer : GLSurfaceView.Renderer {
         glDrawArrays(GL_POINTS, 9, 1);
     }
 
-    companion object {
-
-        // util shader
-        fun validateShader(id: Int, cb: () -> Unit) {
-            val compileStatus: IntArray = IntArray(1)
-            glGetShaderiv(id, GL_COMPILE_STATUS, compileStatus, 0)
-            if (compileStatus[0] == GL_FALSE) {
-                cb()
-                throw Exception("compile shader error")
-            }
-        }
-        fun compileShader(source: String, type: Int): Int {
-            val id = glCreateShader(type)
-            glShaderSource(id, source)
-            glCompileShader(id)
-            validateShader(id) {
-                println("shader source: $source")
-            }
-            return id;
-        }
-
-        // util program
-        fun validateProgramLink(id: Int) {
-            val linkStatus: IntArray = IntArray(1);
-            glGetProgramiv(id, GL_LINK_STATUS, linkStatus, 0)
-            if (linkStatus[0] == GL_FALSE) {
-                throw Exception("Linking of program failed.");
-            }
-        }
-        fun createGlProgram(vsSource: String, fsSource: String): Int {
-            val id = glCreateProgram();
-            glAttachShader(id, compileShader(vsSource, GL_VERTEX_SHADER));
-            glAttachShader(id, compileShader(fsSource, GL_FRAGMENT_SHADER));
-            glLinkProgram(id);
-            validateProgramLink(id);
-            glUseProgram(id)
-            return id
-        }
-    }
 }
